@@ -18,7 +18,7 @@ function registrar() {
   if (!nombre) { toast('El nombre es obligatorio'); return; }
 
   const email = document.getElementById('inp-email').value.trim();
-  const monto = parseFloat(document.getElementById('inp-monto').value) || 0;
+  const monto = parseInt(document.getElementById('inp-monto').value) || 0;
   const fecha = document.getElementById('inp-fecha').value || hoy();
   const nota  = document.getElementById('inp-nota').value.trim();
 
@@ -77,7 +77,7 @@ function renderTabla() {
           <th>Nombre</th>
           <th>Correo</th>
           <th>Fecha</th>
-          <th>Donación</th>
+          <th>Artículos</th>
           <th></th>
         </tr>
       </thead>
@@ -92,8 +92,8 @@ function renderTabla() {
             <td style="color:var(--gray-400);white-space:nowrap">${formatFecha(d.fecha)}</td>
             <td>
               ${d.monto > 0
-                ? `<span class="badge">$${d.monto.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>`
-                : `<span class="badge badge-none">Sin donación</span>`}
+                ? `<span class="badge">${d.monto} artículo${d.monto !== 1 ? 's' : ''}</span>`
+                : `<span class="badge badge-none">Sin artículos</span>`}
             </td>
             <td><button class="btn-delete" onclick="eliminar(${d.id})">Eliminar</button></td>
           </tr>
@@ -107,13 +107,13 @@ function actualizarStats() {
   const monto    = datos.reduce((s, d) => s + (d.monto || 0), 0);
   const donaron  = datos.filter(d => d.monto > 0).length;
   document.getElementById('stat-total').textContent    = total;
-  document.getElementById('stat-monto').textContent    = '$' + monto.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById('stat-monto').textContent    = monto.toLocaleString('es-MX');
   document.getElementById('stat-donantes').textContent = donaron;
 }
 
 function exportarCSV() {
   if (!datos.length) { toast('No hay datos para exportar'); return; }
-  const header = ['Nombre', 'Correo', 'Fecha', 'Donacion MXN', 'Nota'];
+  const header = ['Nombre', 'Correo', 'Fecha', 'Articulos recibidos', 'Nota'];
   const rows = datos.map(d =>
     [d.nombre, d.email, d.fecha, d.monto || 0, d.nota || '']
       .map(v => `"${String(v).replace(/"/g, '""')}"`)
